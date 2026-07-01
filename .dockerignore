@@ -12,39 +12,22 @@ env
 __pycache__
 *.py[cod]
 *$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
 *.egg
 
-# Environment variables
+# Environment files (НЕ копируем в образ)
 .env
+.env.test
 .env.local
-.env.*.local
 
 # IDE
 .vscode
 .idea
 *.swp
 *.swo
-*~
 
 # Docker
 docker-compose*.yml
-Dockerfile
 .dockerignore
 
 # Testing
@@ -62,16 +45,7 @@ logs
 .DS_Store
 Thumbs.db
 
-# Documentation
-README.md
-LICENSE
-docs/
-
 # Database
 *.db
 *.sqlite
 *.sqlite3
-
-# Misc
-*.md
-*.txt

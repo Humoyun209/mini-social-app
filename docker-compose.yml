@@ -17,7 +17,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     networks:
       - social-network
     restart: unless-stopped
@@ -30,7 +30,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-social_network}
     ports:
-      - "5432:5432"
+      - "5489:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -68,7 +68,7 @@ services:
       context: .
       dockerfile: docker/dev/Dockerfile
     container_name: mini-social-celery
-    command: uv run celery -A app.tasks.celery_app worker --loglevel=info --pool=solo
+    command: celery -A app.tasks.celery_app worker --loglevel=info --pool=solo
     volumes:
       - .:/app
     env_file:
@@ -84,10 +84,10 @@ services:
 
   celery-beat:
     build:
-      context: .
+      context: .s
       dockerfile: docker/dev/Dockerfile
     container_name: mini-social-celery-beat
-    command: uv run celery -A app.tasks.celery_app beat --loglevel=info
+    command: celery -A app.tasks.celery_app beat --loglevel=info
     volumes:
       - .:/app
     env_file:
@@ -106,7 +106,7 @@ services:
       context: .
       dockerfile: docker/dev/Dockerfile
     container_name: mini-social-flower
-    command: uv run celery -A app.tasks.celery_app flower --port=5555 --broker=redis://redis:6379/0
+    command: celery -A app.tasks.celery_app flower --port=5555 --broker=redis://redis:6379/0
     ports:
       - "5555:5555"
     volumes:

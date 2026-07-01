@@ -1,17 +1,21 @@
 FROM python:3.12-slim
 
+# Системные зависимости
 RUN apt-get update && apt-get install -y \
     gcc \
-    curl \
     && rm -rf /var/lib/apt/lists/*
-
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /app
 
-COPY pyproject.toml uv.lock .python-version ./
-RUN uv sync --frozen
+# Копируем файлы, нужные для установки пакета
+COPY pyproject.toml README.md ./
 
+# Устанавливаем зависимости
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir .
+
+# Код
 COPY . .
 
-CMD ["sh", "-c", "uv run alembic upgrade head && uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
+# Миграции + запуск
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
