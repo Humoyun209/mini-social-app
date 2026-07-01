@@ -12,6 +12,23 @@ from app.schemas.auth import (
     VerifyEmailRequest,
     ResendVerificationRequest,
 )
+from app.schemas.post import (
+    PostBase,
+    PostCreate,
+    PostUpdate,
+    PostResponse,
+    PostListResponse,
+)
+from app.schemas.comment import (
+    CommentBase,
+    CommentCreate,
+    CommentResponse,
+    CommentListResponse,
+)
+from app.schemas.like import (
+    LikeResponse,
+    LikeStatusResponse,
+)
 
 __all__ = [
     "UserBase",
@@ -24,4 +41,15 @@ __all__ = [
     "TokenResponse",
     "VerifyEmailRequest",
     "ResendVerificationRequest",
+    "PostBase",
+    "PostCreate",
+    "PostUpdate",
+    "PostResponse",
+    "PostListResponse",
+    "CommentBase",
+    "CommentCreate",
+    "CommentResponse",
+    "CommentListResponse",
+    "LikeResponse",
+    "LikeStatusResponse",
 ]

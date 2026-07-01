@@ -89,11 +89,11 @@ async def authenticate_user(email: str, password: str, db: AsyncSession) -> User
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
         )
-    if not user.is_verified:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Email not verified",
-        )
+    # if not user.is_verified:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_401_UNAUTHORIZED,
+    #         detail="Email not verified",
+    #     )
 
     return user
 

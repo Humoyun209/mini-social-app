@@ -5,19 +5,26 @@ services:
     build:
       context: .
       dockerfile: docker/dev/Dockerfile
+    container_name: mini-social-app
     ports:
       - "8000:8000"
     volumes:
       - .:/app
     env_file:
-      - .env
+      - .env.docker
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - social-network
+    restart: unless-stopped
 
   db:
     image: postgres:16-alpine
+    container_name: mini-social-db
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -26,37 +33,99 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-social_network}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - social-network
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
+    container_name: mini-social-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - social-network
+    restart: unless-stopped
 
   celery:
     build:
       context: .
       dockerfile: docker/dev/Dockerfile
-    command: uv run celery -A app.tasks.celery_app worker --loglevel=info
+    container_name: mini-social-celery
+    command: uv run celery -A app.tasks.celery_app worker --loglevel=info --pool=solo
     volumes:
       - .:/app
     env_file:
-      - .env
+      - .env.docker
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - social-network
+    restart: unless-stopped
 
   celery-beat:
     build:
       context: .
       dockerfile: docker/dev/Dockerfile
+    container_name: mini-social-celery-beat
     command: uv run celery -A app.tasks.celery_app beat --loglevel=info
     volumes:
       - .:/app
     env_file:
-      - .env
+      - .env.docker
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - social-network
+    restart: unless-stopped
+
+  flower:
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile
+    container_name: mini-social-flower
+    command: uv run celery -A app.tasks.celery_app flower --port=5555 --broker=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    volumes:
+      - .:/app
+    env_file:
+      - .env.docker
+    depends_on:
+      redis:
+        condition: service_healthy
+      celery:
+        condition: service_started
+    networks:
+      - social-network
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+  redis_data:
+
+networks:
+  social-network:
+    driver: bridge
