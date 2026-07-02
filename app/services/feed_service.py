@@ -1,8 +1,8 @@
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 
-from app.models import User, Post
+from app.models import Post, User
 
 
 async def get_feed(

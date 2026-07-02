@@ -1,25 +1,23 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_current_user
 from app.core.database import get_db
 from app.core.security import create_access_token
+from app.models.user import User
 from app.schemas.auth import (
-    RegisterRequest,
     LoginRequest,
+    RegisterRequest,
     ResendVerificationRequest,
     TokenResponse,
-    VerifyEmailRequest,
 )
-from app.schemas.user import UserResponse
+from app.schemas.user import UserCreate, UserResponse
 from app.services.auth_service import (
-    register_user,
     authenticate_user,
+    register_user,
     resend_verification_email,
     verify_email,
 )
-from app.schemas.user import UserCreate
-from app.api.deps import get_current_user
-from app.models.user import User
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -70,7 +68,6 @@ async def verify(
     token: str,
     db: AsyncSession = Depends(get_db),
 ) -> UserResponse:
-
     user = await verify_email(token, db)
     return UserResponse.model_validate(user)
 

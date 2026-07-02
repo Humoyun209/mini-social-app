@@ -1,20 +1,21 @@
-import uuid
 import math
+import uuid
 from datetime import datetime
-from fastapi import APIRouter, Depends, status, Query
+
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import get_current_verified_user
 from app.core.database import get_db
-from app.api.deps import get_current_user, get_current_verified_user
 from app.models.user import User
-from app.schemas.post import PostCreate, PostUpdate, PostResponse, PostListResponse
+from app.schemas.post import PostCreate, PostListResponse, PostResponse, PostUpdate
 from app.services.post_service import (
-    get_posts,
-    get_post,
     create_post,
-    update_post,
     delete_post,
+    get_post,
     get_post_with_counts,
+    get_posts,
+    update_post,
 )
 
 router = APIRouter(prefix="/posts", tags=["Posts"])

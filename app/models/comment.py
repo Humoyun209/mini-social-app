@@ -1,9 +1,9 @@
-from sqlalchemy import Text, ForeignKey
+from sqlalchemy import ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
-from app.models.mixins import UUIDMixin, CreatedAtMixin
+from app.models.mixins import CreatedAtMixin, UUIDMixin
 
 
 class Comment(Base, UUIDMixin, CreatedAtMixin):

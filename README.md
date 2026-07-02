@@ -1,5 +1,7 @@
 # Mini Social Network API
 
+[![CI](https://github.com/humoyun209/mini-social-app/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/your-repo/actions/workflows/ci.yml)
+
 Backend для мини-социальной сети на FastAPI.
 
 ## Возможности

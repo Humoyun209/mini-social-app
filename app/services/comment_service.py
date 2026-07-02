@@ -1,7 +1,8 @@
 import uuid
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+
 from fastapi import HTTPException, status
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.comment import Comment
 from app.models.post import Post

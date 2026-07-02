@@ -1,12 +1,13 @@
 import uuid
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import get_db
 from app.api.deps import get_current_user
+from app.core.database import get_db
 from app.models.user import User
 from app.schemas.like import LikeResponse, LikeStatusResponse
-from app.services.like_service import like_post, unlike_post, get_like_status
+from app.services.like_service import get_like_status, like_post, unlike_post
 
 router = APIRouter(tags=["Likes"])
 

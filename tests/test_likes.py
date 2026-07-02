@@ -1,6 +1,6 @@
 import random
 import uuid
-import pytest
+
 from httpx import AsyncClient
 
 

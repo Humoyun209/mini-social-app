@@ -1,15 +1,16 @@
 import uuid
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import get_db
 from app.api.deps import get_current_verified_user
+from app.core.database import get_db
 from app.models.user import User
-from app.schemas.comment import CommentCreate, CommentResponse, CommentListResponse
+from app.schemas.comment import CommentCreate, CommentListResponse, CommentResponse
 from app.services.comment_service import (
-    get_comments_by_post,
     create_comment,
     delete_comment,
+    get_comments_by_post,
 )
 
 router = APIRouter(tags=["Comments"])

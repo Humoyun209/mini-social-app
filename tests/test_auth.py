@@ -1,5 +1,7 @@
 import uuid
+
 from httpx import AsyncClient
+
 from app.core.security import create_verification_token
 
 

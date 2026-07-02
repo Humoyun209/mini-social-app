@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
-from app.models.mixins import UUIDMixin, CreatedAtMixin
+from app.models.mixins import CreatedAtMixin, UUIDMixin
 
 
 class Like(Base, UUIDMixin, CreatedAtMixin):

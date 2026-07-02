@@ -1,16 +1,16 @@
 from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from fastapi import HTTPException, status
 
-from app.models.user import User
-from app.schemas.user import UserCreate
+from fastapi import HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.security import (
+    create_verification_token,
     hash_password,
     verify_password,
-    create_access_token,
-    create_verification_token,
 )
+from app.models.user import User
+from app.schemas.user import UserCreate
 from app.services.email_service import send_verification_email
 
 
@@ -112,8 +112,9 @@ async def verify_email(token: str, db: AsyncSession) -> User:
     Raises:
         HTTPException: если токен невалидный или пользователь не найден
     """
-    from app.core.security import decode_token
     import jwt
+
+    from app.core.security import decode_token
 
     try:
         payload = decode_token(token, token_type="verification")

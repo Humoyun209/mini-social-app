@@ -2,16 +2,16 @@ import os
 
 os.environ["ENV_FILE"] = ".env.test"
 
-import sys
 import asyncio
+import sys
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 import uuid
-import pytest
+
 import pytest_asyncio
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -22,8 +22,8 @@ from sqlalchemy.pool import NullPool
 from app.core.config import settings
 from app.core.database import get_db
 from app.core.security import create_verification_token
-from app.models.base import Base
 from app.main import app
+from app.models.base import Base
 
 TEST_DB_URL = settings.DATABASE_URL
 

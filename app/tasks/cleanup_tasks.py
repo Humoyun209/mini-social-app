@@ -1,13 +1,13 @@
 import asyncio
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import select, delete
+from sqlalchemy import delete, select
 
-from app.tasks.celery_app import celery_app
+from app.core.config import settings
 from app.core.database import async_session_factory
 from app.models.user import User
-from app.core.config import settings
+from app.tasks.celery_app import celery_app
 
 logger = logging.getLogger(__name__)
 
@@ -19,12 +19,9 @@ async def _cleanup_unverified_users() -> int:
     Returns:
         int: количество удаленных пользователей
     """
-    cutoff_time = datetime.now(timezone.utc) - timedelta(
-        hours=settings.UNVERIFIED_USER_CLEANUP_HOURS
-    )
+    cutoff_time = datetime.now(UTC) - timedelta(hours=settings.UNVERIFIED_USER_CLEANUP_HOURS)
 
     async with async_session_factory() as session:
-        # Находим пользователей для удаления
         result = await session.execute(
             select(User).where(
                 User.is_verified == False,
@@ -36,7 +33,6 @@ async def _cleanup_unverified_users() -> int:
         count = len(users_to_delete)
 
         if count > 0:
-            # Удаляем пользователей
             await session.execute(
                 delete(User).where(
                     User.is_verified == False,
@@ -60,9 +56,6 @@ async def _cleanup_unverified_users() -> int:
 def cleanup_unverified_users(self) -> dict:
     """
     Celery задача для очистки неверифицированных пользователей.
-
-    Удаляет пользователей с is_verified=False, которые были созданы
-    более UNVERIFIED_USER_CLEANUP_HOURS часов назад.
 
     Returns:
         dict: результат выполнения задачи

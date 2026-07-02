@@ -1,10 +1,11 @@
 import logging
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
+from app.api import auth, comments, feed, likes, posts, users
 from app.core.config import settings
 from app.core.database import close_db
-from app.api import auth, users, posts, comments, likes, feed
 
 logging.basicConfig(
     level=logging.INFO,
