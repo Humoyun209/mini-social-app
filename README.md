@@ -278,6 +278,12 @@ psql -U postgres -c "CREATE DATABASE social_network_test;"
 # All tests
 uv run pytest tests/ -v
 
+# All tests with docker and building
+docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
+
+# All tests with docker
+docker-compose -f docker-compose.test.yml up
+
 # With code coverage
 uv run pytest tests/ -v --cov=app --cov-report=term-missing
 
