@@ -34,10 +34,8 @@ async def get_posts(
     Returns:
         tuple: (список публикаций, общее количество)
     """
-    # Базовый запрос
     query = select(Post)
 
-    # Поиск
     if search:
         search_pattern = f"%{search}%"
         query = query.where(
@@ -47,18 +45,15 @@ async def get_posts(
             )
         )
 
-    # Фильтрация по дате
     if date_from:
         query = query.where(Post.created_at >= date_from)
     if date_to:
         query = query.where(Post.created_at <= date_to)
 
-    # Общее количество
     count_query = select(func.count()).select_from(query.subquery())
     total_result = await db.execute(count_query)
     total = total_result.scalar() or 0
 
-    # Пагинация
     offset = (page - 1) * page_size
     query = query.order_by(Post.created_at.desc()).offset(offset).limit(page_size)
 

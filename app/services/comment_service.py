@@ -24,7 +24,6 @@ async def get_comments_by_post(
     Returns:
         tuple: (список комментариев, общее количество)
     """
-    # Проверяем что пост существует
     result = await db.execute(select(Post).where(Post.id == post_id))
     post = result.scalar_one_or_none()
 
@@ -68,7 +67,6 @@ async def create_comment(
     Raises:
         HTTPException: если публикация не найдена
     """
-    # Проверяем что пост существует
     result = await db.execute(select(Post).where(Post.id == post_id))
     post = result.scalar_one_or_none()
 
@@ -116,7 +114,6 @@ async def delete_comment(
             detail="Comment not found",
         )
 
-    # Проверяем что пользователь - автор
     if comment.author_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

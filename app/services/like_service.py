@@ -28,7 +28,6 @@ async def like_post(
     Raises:
         HTTPException: если публикация не найдена, это свой пост или уже лайкал
     """
-    # Проверяем что пост существует
     result = await db.execute(select(Post).where(Post.id == post_id))
     post = result.scalar_one_or_none()
 
@@ -38,14 +37,12 @@ async def like_post(
             detail="Post not found",
         )
 
-    # Проверяем что пользователь не лайкает свой пост
     if post.author_id == current_user.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You cannot like your own post",
         )
 
-    # Проверяем что пользователь еще не лайкал этот пост
     result = await db.execute(
         select(Like).where(
             Like.user_id == current_user.id,
@@ -60,7 +57,6 @@ async def like_post(
             detail="You already liked this post",
         )
 
-    # Создаем лайк
     like = Like(
         user_id=current_user.id,
         post_id=post_id,
@@ -89,7 +85,6 @@ async def unlike_post(
     Raises:
         HTTPException: если публикация не найдена или лайк не найден
     """
-    # Проверяем что пост существует
     result = await db.execute(select(Post).where(Post.id == post_id))
     post = result.scalar_one_or_none()
 
@@ -99,7 +94,6 @@ async def unlike_post(
             detail="Post not found",
         )
 
-    # Ищем лайк
     result = await db.execute(
         select(Like).where(
             Like.user_id == current_user.id,
@@ -114,7 +108,6 @@ async def unlike_post(
             detail="Like not found",
         )
 
-    # Удаляем лайк
     await db.delete(like)
     await db.flush()
 

@@ -28,7 +28,6 @@ async def register_user(user_data: UserCreate, db: AsyncSession) -> User:
     Raises:
         HTTPException: если email или username уже заняты
     """
-    # Проверяем что email не занят
     result = await db.execute(select(User).where(User.email == user_data.email))
     if result.scalar_one_or_none():
         raise HTTPException(
@@ -36,7 +35,6 @@ async def register_user(user_data: UserCreate, db: AsyncSession) -> User:
             detail="Email already registered",
         )
 
-    # Проверяем что username не занят
     result = await db.execute(select(User).where(User.username == user_data.username))
     if result.scalar_one_or_none():
         raise HTTPException(
@@ -44,7 +42,6 @@ async def register_user(user_data: UserCreate, db: AsyncSession) -> User:
             detail="Username already taken",
         )
 
-    # Создаем пользователя
     user = User(
         email=user_data.email,
         username=user_data.username,
@@ -54,13 +51,11 @@ async def register_user(user_data: UserCreate, db: AsyncSession) -> User:
     )
 
     db.add(user)
-    await db.flush()  # Получаем ID до коммита
+    await db.flush()
     await db.refresh(user)
 
-    # Создаем токен верификации
     verification_token = create_verification_token(user.id)
 
-    # Отправляем письмо (в консоль для простоты)
     await send_verification_email(user.email, verification_token)
 
     return user
@@ -89,11 +84,6 @@ async def authenticate_user(email: str, password: str, db: AsyncSession) -> User
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
         )
-    # if not user.is_verified:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_401_UNAUTHORIZED,
-    #         detail="Email not verified",
-    #     )
 
     return user
 

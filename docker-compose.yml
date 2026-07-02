@@ -84,7 +84,7 @@ services:
 
   celery-beat:
     build:
-      context: .s
+      context: .
       dockerfile: docker/dev/Dockerfile
     container_name: mini-social-celery-beat
     command: celery -A app.tasks.celery_app beat --loglevel=info
